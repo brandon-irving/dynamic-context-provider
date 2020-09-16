@@ -1,13 +1,91 @@
-# TSDX React User Guide
+# Dynamic-Context-Provider
 
-Congrats! You just saved yourself hours of work by bootstrapping this project with TSDX. Let’s get you oriented with what’s here and how to use it.
+  With the context api  some familiar patterns began popping up. Create a Context, Provider, a reducer and state objects. This is fine, but say you have multiple     pages and want each to have their own context, you can easily find yourself in boilerplate land. Luckily, with this package you won't have that issue!
+  
+> This package utilizes Reacts context API, if you're not familiar with it, [here's some good ole' docs!](https://reactjs.org/docs/context.html)
 
-> This TSDX setup is meant for developing React component libraries (not apps!) that can be published to NPM. If you’re looking to build a React-based app, you should use `create-react-app`, `razzle`, `nextjs`, `gatsby`, or `react-static`.
+  ```import { ContextStateProvider, useContextState } from 'dynamic-context-provider'```
 
-> If you’re new to TypeScript and React, checkout [this handy cheatsheet](https://github.com/sw-yx/react-typescript-cheatsheet/)
+## Use
+  Instead of creating multiple contexts, reducers etc, we simply reuse the same Provider and pass it a different ```stateConfig```. The provider will create a reducer and state objects based off the config and the state will be accessible in the ```useContextState``` hook.
+  
+```bash
+import * as React from 'react';
+import { ContextStateProvider, useContextState } from '../.';
+
+const exampleConfig ={
+  first: 'Megaman', last: 'isTheBest'
+}
+const exampleConfig2 ={
+  count: 0
+}
+const App = () => {
+  return (
+    <div>
+      <ContextStateProvider stateConfig={exampleConfig}>
+        <Example />
+      </ContextStateProvider>
+      <ContextStateProvider stateConfig={exampleConfig2}>
+        <Example2 />
+      </ContextStateProvider>
+    </div>
+  );
+};
+
+const Example = () => {
+  const {first, last} = useContextState()
+  return(
+    <div>
+      {first} {last}
+    </div>
+  )
+}
+const Example2 = () => {
+  const {count} = useContextState()
+  return(
+    <div>
+      {count}
+    </div>
+  )
+}
+```
+
+  Updating each individual instance of the dynamic context is also simple with the ```updateContextState``` function, that's accessible from ```useContextState```.
+  ```bash
+  import { useContextState } from '../.';
+
+  const Example2 = () => {
+  const { count, updateContextState } = useContextState()
+  function increaseCount(){
+    let newCount = count
+    updateContextState({count: newCount+=1 })
+  }
+  return(
+    <div>
+      {count}
+      <button onClick={increaseCount}>+</button>
+    </div>
+  )
+}
+// you can also update multiple states at once, example: updateContextState({first: 'new', last: 'name'})
+  ```
+  This project also supports caching via sessionStorage, so if you ever want to store your state you can add a ```cacheStateKey``
+  ```bash
+  <ContextStateProvider cacheStateKey="homePageCache" stateConfig={homePageConfig}>
+        <HomePage />
+      </ContextStateProvider>
+  ```
+  ## Provider props
+  ```bash
+  ContextStateProvider {
+      children: React.ReactNode,
+      stateConfig: object,
+      cacheStateKey?: string
+  ```  
+  
+  This was bootstrapped using TSDX, here's some of the wonderful features that comes along with their excellent project: 
 
 ## Commands
-
 TSDX scaffolds your new library inside `/src`, and also sets up a [Parcel-based](https://parceljs.org) playground for it inside `/example`.
 
 The recommended workflow is to run TSDX in one terminal:
