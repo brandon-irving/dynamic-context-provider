@@ -10,12 +10,12 @@ test('ContextStateProvider generates state values from stateConfig', () => {
     last: 'Man',
   }
 
-   render(
-  <ContextStateProvider stateConfig={providerProps}>
-    <ContextState.Consumer>
-  {(value: any)=><span>Received: {value.first} {value.last}</span>}
-    </ContextState.Consumer>
-  </ContextStateProvider>
+  render(
+    <ContextStateProvider stateConfig={providerProps}>
+      <ContextState.Consumer>
+        {(value: any) => <span>Received: {value.first} {value.last}</span>}
+      </ContextState.Consumer>
+    </ContextStateProvider>
   )
   expect(screen.getByText(/^Received:/).textContent).toBe('Received: Mega Man')
 
