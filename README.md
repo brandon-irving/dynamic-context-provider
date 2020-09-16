@@ -4,14 +4,15 @@
   
 > This package utilizes Reacts context API, if you're not familiar with it, [here's some good ole' docs!](https://reactjs.org/docs/context.html)
 
-  ```import { ContextStateProvider, useContextState } from 'dynamic-context-provider'```
 
 ## Use
+  ```import { ContextStateProvider, useContextState } from 'dynamic-context-provider'```
+
   Instead of creating multiple contexts, reducers etc, we simply reuse the same Provider and pass it a different ```stateConfig```. The provider will create a reducer and state objects based off the config and the state will be accessible in the ```useContextState``` hook.
   
 ```bash
 import * as React from 'react';
-import { ContextStateProvider, useContextState } from '../.';
+import { ContextStateProvider, useContextState } from 'dynamic-context-provider';
 
 const exampleConfig ={
   first: 'Megaman', last: 'isTheBest'
@@ -52,7 +53,7 @@ const Example2 = () => {
 
   Updating each individual instance of the dynamic context is also simple with the ```updateContextState``` function, that's accessible from ```useContextState```.
   ```bash
-  import { useContextState } from '../.';
+  import { useContextState } from 'dynamic-context-provider';
 
   const Example2 = () => {
   const { count, updateContextState } = useContextState()
