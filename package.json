@@ -37,6 +37,14 @@
     "tslib": "^2.0.1",
     "typescript": "^4.0.2"
   },
+  "keywords": [
+    "react",
+    "react native",
+    "context",
+    "context api",
+    "global state",
+    "state management"
+  ],
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.0.4"
