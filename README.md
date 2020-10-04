@@ -70,18 +70,93 @@ const Example2 = () => {
 }
 // you can also update multiple states at once, example: updateContextState({first: 'new', last: 'name'})
   ```
-  This project also supports caching via sessionStorage, so if you ever want to store your state you can add a ```cacheStateKey``
+  
+  There may be times when you would like functions accessible to all the children your dynamic context parents. This is possible via the ```globalFunctions``` prop. This prop provides you with access to the context providers current state and the ```updateContextState``` function.
+  
+  ```bash
+import 'react-app-polyfill/ie11';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { ContextStateProvider, useContextState } from '../.';
+
+const exampleConfig3 ={
+  pokemonInfo: 0,
+  isLoadingPokemonInfo: false
+}
+const globalFunctions = (props: any) => {
+  async function getPokemonInfo(name: string) {
+    let pokemonInfo = { error: true }
+    props.updateContextState({ isLoadingPokemonInfo: true })
+
+    try {
+      const data = await fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLocaleLowerCase()}`)
+      pokemonInfo = await data.json()
+    } catch (e) {
+      console.error('There was an error', e)
+    }
+    props.updateContextState({ pokemonInfo, isLoadingPokemonInfo: false })
+  }
+  return {
+    getPokemonInfo
+  }
+}
+const App = () => {
+  return (
+    <div>
+      <ContextStateProvider globalFunctions={globalFunctions} stateConfig={exampleConfig3}>
+        <Example3 />
+      </ContextStateProvider>
+    </div>
+  );
+};
+
+const Example3 = () => {
+  const { pokemonInfo, isLoadingPokemonInfo, getPokemonInfo } = useContextState()
+  const [pokemonName, setPokemonName] = React.useState('')
+  async function handleClick() {
+    await getPokemonInfo(pokemonName)
+  }
+  if (isLoadingPokemonInfo) {
+    return <div>Loading...</div>
+  }
+  return (
+    <>
+      <div>
+        <input name="pokemonName" onChange={(e: any) => setPokemonName(e.target.value)} value={pokemonName} type="text" />
+        <button type="button" onClick={handleClick}>Search pokemon</button>
+      </div>
+      {
+        pokemonInfo.error && <div>Error finding pokemon</div>
+      }
+      {pokemonInfo.name &&
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img src={pokemonInfo.sprites.front_shiny} />
+          <span> {pokemonInfo.order}</span>: {pokemonInfo.name}
+
+        </div>
+
+      }
+    </>
+
+  )
+}
+```
+
+  
+  This project also supports caching via sessionStorage, so if you ever want to store your state you can add a ```cacheStateKey```
   ```bash
   <ContextStateProvider cacheStateKey="homePageCache" stateConfig={homePageConfig}>
         <HomePage />
       </ContextStateProvider>
   ```
+ 
   ## Provider props
   ```bash
   ContextStateProvider {
       children: React.ReactNode,
       stateConfig: object,
-      cacheStateKey?: string
+      cacheStateKey?: string,
+      globalFunctions?: ({state, updateContextState}: {state: any, updateContextState: any})=>object, // return an object containing functions
   ```  
   
   This was bootstrapped using TSDX, here's some of the wonderful features that comes along with their excellent project: 
