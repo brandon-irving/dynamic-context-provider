@@ -4,6 +4,8 @@
   
 > This package utilizes Reacts context API, if you're not familiar with it, [here's some good ole' docs!](https://reactjs.org/docs/context.html)
 
+## Run
+To run the examples provided in this project, cd into the example folder and run ```npm start```. Or in the root you can run ```cd example && npm start```
 
 ## Use
   ```import { ContextStateProvider, useContextState } from 'dynamic-context-provider'```
