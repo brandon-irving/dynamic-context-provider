@@ -1,14 +1,21 @@
 import * as React from 'react'
 
+
 interface ContextStateInterface {
   children: React.ReactNode,
   stateConfig: object,
-  cacheStateKey?: string 
+  cacheStateKey?: string,
+  globalFunctions?: ({state, updateContextState}: {state: any, updateContextState: any})=>object,
 }
 export const ContextState = React.createContext<any>({})
 
 export function ContextStateProvider(props: ContextStateInterface) {
-  const initialState = props.cacheStateKey && sessionStorage[props.cacheStateKey] ? JSON.parse(sessionStorage[props.cacheStateKey]) : props.stateConfig
+  const {
+    globalFunctions = ()=>{},
+    cacheStateKey = null,
+    stateConfig
+  } = props
+  const initialState = cacheStateKey && sessionStorage[cacheStateKey] ? JSON.parse(sessionStorage[cacheStateKey]) : stateConfig
 
   // Dynamically creates the reducer dependent on the stateConfig
   function globalReducer(state: any, action: { type: any; stateConfig: any }) {
@@ -36,10 +43,10 @@ React.useEffect(() => {
     sessionStorage.setItem(props.cacheStateKey, JSON.stringify(state))
   }
 }, [state, props.cacheStateKey])
-
   return (
     <ContextState.Provider value={{
       ...state,
+      ...globalFunctions({state, updateContextState}),
       updateContextState
     }}>
       {props.children}
